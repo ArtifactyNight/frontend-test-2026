@@ -43,11 +43,65 @@ export const variationSchema = z.object({
 })
 export type Variation = z.infer<typeof variationSchema>
 
+export const SERVE_TYPES = ['variation', 'percentage', 'progressive'] as const
+export type ServeType = (typeof SERVE_TYPES)[number]
+
+export const progressiveRolloutPointSchema = z.object({
+  variation: z.string().min(1, 'Select a variation'),
+  percentage: z.number().min(0, 'Min 0'),
+  date: z.string().min(1, 'Date is required'),
+})
+
+export const serveConfigSchema = z
+  .object({
+    type: z.enum(SERVE_TYPES),
+    variation: z.string(),
+    percentage: z.record(z.string(), z.number()),
+    progressiveRollout: z.object({
+      initial: progressiveRolloutPointSchema,
+      end: progressiveRolloutPointSchema,
+    }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === 'variation' && !data.variation) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Select a variation',
+        path: ['variation'],
+      })
+    }
+
+    if (data.type === 'progressive') {
+      const initialDate = new Date(data.progressiveRollout.initial.date)
+      const endDate = new Date(data.progressiveRollout.end.date)
+      if (
+        !isNaN(initialDate.getTime()) &&
+        !isNaN(endDate.getTime()) &&
+        endDate <= initialDate
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'End date must be after initial date',
+          path: ['progressiveRollout', 'end', 'date'],
+        })
+      }
+    }
+  })
+
+export type ServeConfig = z.infer<typeof serveConfigSchema>
+
+export const metadataItemSchema = z.object({
+  id: z.string(),
+  key: z.string(),
+  value: z.string(),
+})
+export type MetadataItem = z.infer<typeof metadataItemSchema>
+
 export const targetingRuleSchema = z.object({
   id: z.string(),
+  name: z.string().min(1, 'Name is required'),
   queryGroup: ruleGroupSchema,
-  percentage: z.number().min(1, 'Min 1').max(100, 'Max 100'),
-  variation: z.string().min(1, 'Select a variation'),
+  serve: serveConfigSchema,
 })
 export type TargetingRule = z.infer<typeof targetingRuleSchema>
 
@@ -62,7 +116,8 @@ export const flagFormSchema = z.object({
     .array(variationSchema)
     .min(1, 'At least one variation required'),
   targeting: z.array(targetingRuleSchema),
-  defaultVariation: z.string().min(1, 'Select a default variation'),
+  defaultServe: serveConfigSchema,
+  metadata: z.array(metadataItemSchema),
 })
 
 export type FlagFormValues = z.infer<typeof flagFormSchema>

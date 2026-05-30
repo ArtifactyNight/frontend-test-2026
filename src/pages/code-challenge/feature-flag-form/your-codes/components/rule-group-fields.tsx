@@ -107,98 +107,104 @@ export const RuleGroupFields = withFieldGroup({
         <group.AppField name="conditions" mode="array">
           {(conditionsField) => (
             <div className="flex flex-col gap-2">
-              {conditionsField.state.value.map((_: RuleCondition, i: number) => {
-                const condId = conditionsField.state.value[i]?.id ?? i
-                return (
-                  <div key={condId} className="flex items-start gap-1.5">
-                    <group.AppField name={`conditions[${i}].field`}>
-                      {(f) => {
-                        const isInvalid = isFieldInvalid(f.state.meta)
-                        return (
-                          <Field
-                            className="min-w-0 flex-1"
-                            data-invalid={isInvalid}
-                          >
-                            <Input
-                              placeholder="field"
-                              value={f.state.value}
-                              onChange={(e) => f.handleChange(e.target.value)}
-                              onBlur={f.handleBlur}
-                              aria-invalid={isInvalid}
-                              className="h-8 text-xs"
-                            />
-                            {isInvalid && (
-                              <FieldError
-                                errors={normalizeFieldErrors(f.state.meta.errors)}
+              {conditionsField.state.value.map(
+                (_: RuleCondition, i: number) => {
+                  const condId = conditionsField.state.value[i]?.id ?? i
+                  return (
+                    <div key={condId} className="flex items-start gap-1.5">
+                      <group.AppField name={`conditions[${i}].field`}>
+                        {(f) => {
+                          const isInvalid = isFieldInvalid(f.state.meta)
+                          return (
+                            <Field
+                              className="min-w-0 flex-1"
+                              data-invalid={isInvalid}
+                            >
+                              <Input
+                                placeholder="field"
+                                value={f.state.value}
+                                onChange={(e) => f.handleChange(e.target.value)}
+                                onBlur={f.handleBlur}
+                                aria-invalid={isInvalid}
+                                className="h-8 text-xs"
                               />
-                            )}
-                          </Field>
-                        )
-                      }}
-                    </group.AppField>
+                              {isInvalid && (
+                                <FieldError
+                                  errors={normalizeFieldErrors(
+                                    f.state.meta.errors,
+                                  )}
+                                />
+                              )}
+                            </Field>
+                          )
+                        }}
+                      </group.AppField>
 
-                    <group.AppField name={`conditions[${i}].operator`}>
-                      {(f) => (
-                        <Select
-                          value={f.state.value}
-                          onValueChange={f.handleChange}
-                        >
-                          <SelectTrigger className="h-8 w-24 shrink-0 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {OPERATORS.map((op) => (
-                              <SelectItem
-                                key={op}
-                                value={op}
-                                className="text-xs"
-                              >
-                                {op}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    </group.AppField>
-
-                    <group.AppField name={`conditions[${i}].value`}>
-                      {(f) => {
-                        const isInvalid = isFieldInvalid(f.state.meta)
-                        return (
-                          <Field
-                            className="min-w-0 flex-1"
-                            data-invalid={isInvalid}
+                      <group.AppField name={`conditions[${i}].operator`}>
+                        {(f) => (
+                          <Select
+                            value={f.state.value}
+                            onValueChange={f.handleChange}
                           >
-                            <Input
-                              placeholder="value"
-                              value={f.state.value}
-                              onChange={(e) => f.handleChange(e.target.value)}
-                              onBlur={f.handleBlur}
-                              aria-invalid={isInvalid}
-                              className="h-8 text-xs"
-                            />
-                            {isInvalid && (
-                              <FieldError
-                                errors={normalizeFieldErrors(f.state.meta.errors)}
-                              />
-                            )}
-                          </Field>
-                        )
-                      }}
-                    </group.AppField>
+                            <SelectTrigger className="h-8 w-24 shrink-0 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {OPERATORS.map((op) => (
+                                <SelectItem
+                                  key={op}
+                                  value={op}
+                                  className="text-xs"
+                                >
+                                  {op}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </group.AppField>
 
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
-                      onClick={() => conditionsField.removeValue(i)}
-                    >
-                      <Trash2Icon />
-                    </Button>
-                  </div>
-                )
-              })}
+                      <group.AppField name={`conditions[${i}].value`}>
+                        {(f) => {
+                          const isInvalid = isFieldInvalid(f.state.meta)
+                          return (
+                            <Field
+                              className="min-w-0 flex-1"
+                              data-invalid={isInvalid}
+                            >
+                              <Input
+                                placeholder="value"
+                                value={f.state.value}
+                                onChange={(e) => f.handleChange(e.target.value)}
+                                onBlur={f.handleBlur}
+                                aria-invalid={isInvalid}
+                                className="h-8 text-xs"
+                              />
+                              {isInvalid && (
+                                <FieldError
+                                  errors={normalizeFieldErrors(
+                                    f.state.meta.errors,
+                                  )}
+                                />
+                              )}
+                            </Field>
+                          )
+                        }}
+                      </group.AppField>
+
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
+                        onClick={() => conditionsField.removeValue(i)}
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  )
+                },
+              )}
             </div>
           )}
         </group.AppField>

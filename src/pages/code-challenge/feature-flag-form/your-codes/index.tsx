@@ -3,6 +3,7 @@ import { FlagMetadata } from './components/flag-metadata'
 import { FlagVariations } from './components/flag-variations'
 import JsonPreview from './components/json-preview'
 import { TargetingRules } from './components/targeting-rules'
+import { VariationSync } from './components/variation-sync'
 import { useAppForm } from './hooks/form-hook'
 import { featureFlagFormOptions } from './lib/form-options'
 
@@ -11,6 +12,7 @@ function YourCode() {
 
   return (
     <form.AppForm>
+      <VariationSync />
       <form
         onSubmit={(e) => {
           e.preventDefault()

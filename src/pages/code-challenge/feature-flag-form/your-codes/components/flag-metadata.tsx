@@ -8,9 +8,19 @@ import {
   FieldLabel,
   FieldTitle,
 } from '#/components/ui/field'
+import {
+  KeyValue,
+  KeyValueAdd,
+  KeyValueItem,
+  KeyValueKeyInput,
+  KeyValueList,
+  KeyValueRemove,
+  KeyValueValueInput,
+} from '#/components/ui/key-value'
 import { Input } from '#/components/ui/input'
 import { Switch } from '#/components/ui/switch'
 import { Textarea } from '#/components/ui/textarea'
+import { Separator } from '#/components/ui/separator'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
 import { isFieldInvalid, normalizeFieldErrors } from '../lib/utils'
@@ -106,6 +116,37 @@ export const FlagMetadata = withForm({
                   </Field>
                 )
               }}
+            </form.AppField>
+
+            <Separator />
+
+            <form.AppField name="metadata">
+              {(field) => (
+                <Field>
+                  <FieldLabel>Metadata</FieldLabel>
+                  <FieldDescription>
+                    Optional key-value metadata attached to this flag.
+                  </FieldDescription>
+                  <KeyValue
+                    value={field.state.value}
+                    onValueChange={field.handleChange}
+                    minItems={0}
+                  >
+                    <KeyValueList>
+                      <KeyValueItem>
+                        <KeyValueKeyInput className="h-9 text-sm" />
+                        <KeyValueValueInput
+                          placeholder="Value"
+                          className="min-h-9 text-sm"
+                          maxRows={3}
+                        />
+                        <KeyValueRemove />
+                      </KeyValueItem>
+                    </KeyValueList>
+                    <KeyValueAdd />
+                  </KeyValue>
+                </Field>
+              )}
             </form.AppField>
           </FieldGroup>
         </CardContent>

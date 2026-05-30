@@ -28,7 +28,7 @@ import type { ReactNode } from 'react'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
 import type { TargetingRule } from '../lib/schema'
-import { newId } from '../lib/utils'
+import { createDefaultServe, newId } from '../lib/utils'
 import {
   TargetingRuleFields,
   targetingRuleFields,
@@ -114,10 +114,7 @@ export const TargetingRules = withForm({
       const newIdx = targeting.findIndex((r) => r.id === over.id)
       if (oldIdx === -1 || newIdx === -1) return
 
-      form.setFieldValue(
-        'targeting',
-        arrayMove(targeting, oldIdx, newIdx) as typeof targeting,
-      )
+      form.setFieldValue('targeting', arrayMove(targeting, oldIdx, newIdx))
     }
 
     return (
@@ -180,9 +177,12 @@ export const TargetingRules = withForm({
             type="button"
             variant="outline"
             size="sm"
-            onClick={() =>
+            onClick={() => {
+              const ruleCount = form.state.values.targeting.length
+              const firstVariation = form.state.values.variations[0]?.key ?? ''
               form.pushFieldValue('targeting', {
                 id: newId(),
+                name: `Rule ${ruleCount + 1}`,
                 queryGroup: {
                   id: newId(),
                   connector: 'AND' as const,
@@ -196,10 +196,9 @@ export const TargetingRules = withForm({
                   ],
                   groups: [],
                 },
-                percentage: 100,
-                variation: form.state.values.variations[0]?.key ?? '',
+                serve: createDefaultServe(firstVariation),
               })
-            }
+            }}
           >
             <PlusIcon data-icon="inline-start" />
             Add Rule
