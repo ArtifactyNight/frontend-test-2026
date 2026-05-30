@@ -1,6 +1,15 @@
 import { z } from 'zod'
 
-export const OPERATORS = ['==', '!=', '>', '<', '>=', '<=', 'in', 'not in'] as const
+export const OPERATORS = [
+  '==',
+  '!=',
+  '>',
+  '<',
+  '>=',
+  '<=',
+  'in',
+  'not in',
+] as const
 export type Operator = (typeof OPERATORS)[number]
 
 const ruleConditionSchema = z.object({
@@ -49,7 +58,9 @@ export const flagFormSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers and hyphens only'),
   description: z.string(),
   enabled: z.boolean(),
-  variations: z.array(variationSchema).min(1, 'At least one variation required'),
+  variations: z
+    .array(variationSchema)
+    .min(1, 'At least one variation required'),
   targeting: z.array(targetingRuleSchema),
   defaultVariation: z.string().min(1, 'Select a default variation'),
 })

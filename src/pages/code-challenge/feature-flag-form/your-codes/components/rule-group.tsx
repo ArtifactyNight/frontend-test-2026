@@ -1,11 +1,5 @@
-import { PlusIcon, Trash2Icon, LayersIcon } from 'lucide-react'
-import { cn } from '#/lib/utils'
-import { useFormContext } from '../form-hook'
-import { newId } from '../utils'
-import { OPERATORS } from '../schema'
-import { Input } from '#/components/ui/input'
 import { Button } from '#/components/ui/button'
-import { ToggleGroup, ToggleGroupItem } from '#/components/ui/toggle-group'
+import { Input } from '#/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -13,6 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select'
+import { ToggleGroup, ToggleGroupItem } from '#/components/ui/toggle-group'
+import { cn } from '#/lib/utils'
+import { LayersIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { useFormContext } from '../hooks/form-hook'
+import { OPERATORS } from '../lib/schema'
+import { newId } from '../lib/utils'
 
 const DEPTH_COLORS = [
   'border-blue-500/50',
@@ -121,7 +121,7 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
 
                   <form.Field name={`${basePath}.conditions[${i}].operator`}>
                     {(f: any) => (
-                      <Select value={f.state.value} onValueChange={f.handleChange}>
+                      <Select value={f.state.value || null!} onValueChange={f.handleChange}>
                         <SelectTrigger className="h-8 w-24 shrink-0 text-xs">
                           <SelectValue />
                         </SelectTrigger>

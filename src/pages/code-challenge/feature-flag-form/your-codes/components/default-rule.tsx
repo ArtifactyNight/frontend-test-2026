@@ -1,4 +1,3 @@
-import { useFormContext } from '../form-hook'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Label } from '#/components/ui/label'
 import {
@@ -8,13 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select'
-import type { FlagFormValues } from '../schema'
+import { withForm } from '../hooks/form-hook'
+import { featureFlagFormOptions } from '../lib/form-options'
 
-export default function DefaultRule() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const form = useFormContext() as any
-
-  return (
+export const DefaultRule = withForm({
+  ...featureFlagFormOptions,
+  render: ({ form }) => (
     <Card>
       <CardHeader className="border-b">
         <CardTitle>Default Rule</CardTitle>
@@ -26,19 +24,21 @@ export default function DefaultRule() {
         <form.Field
           name="defaultVariation"
           validators={{
-            onBlur: ({ value }: any) => (!value ? 'Select a default variation' : undefined),
+            onBlur: ({ value }) =>
+              !value ? 'Select a default variation' : undefined,
           }}
         >
-          {(field: any) => {
-            const variationKeys: string[] = (form as any).state.values.variations.map(
-              (v: FlagFormValues['variations'][number]) => v.key,
-            )
+          {(field) => {
+            const variationKeys: string[] = form.state.values.variations.map((v) => v.key)
             return (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="defaultVariation">
                   Default Variation <span className="text-destructive">*</span>
                 </Label>
-                <Select value={field.state.value} onValueChange={field.handleChange}>
+                <Select
+                  value={field.state.value}
+                  onValueChange={field.handleChange}
+                >
                   <SelectTrigger
                     id="defaultVariation"
                     aria-invalid={field.state.meta.errors.length > 0}
@@ -60,7 +60,9 @@ export default function DefaultRule() {
                   </SelectContent>
                 </Select>
                 {field.state.meta.errors.length > 0 && (
-                  <p className="text-xs text-destructive">{field.state.meta.errors[0]}</p>
+                  <p className="text-xs text-destructive">
+                    {field.state.meta.errors[0]}
+                  </p>
                 )}
               </div>
             )
@@ -68,5 +70,5 @@ export default function DefaultRule() {
         </form.Field>
       </CardContent>
     </Card>
-  )
-}
+  ),
+})

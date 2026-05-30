@@ -1,7 +1,7 @@
 import Editor from '@monaco-editor/react'
-import { useFormContext } from '../form-hook'
-import { buildOutput } from '../utils'
-import type { FlagFormValues } from '../schema'
+import { useFormContext } from '../hooks/form-hook'
+import { buildOutput } from '../lib/utils'
+import type { FlagFormValues } from '../lib/schema'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 
 export default function JsonPreview() {

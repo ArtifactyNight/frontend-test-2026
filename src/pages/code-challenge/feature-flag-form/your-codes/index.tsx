@@ -1,30 +1,13 @@
-import { useAppForm } from './form-hook'
-import { flagFormSchema, type FlagFormValues } from './schema'
-import { newId } from './utils'
-import FlagMetadata from './components/flag-metadata'
-import FlagVariations from './components/flag-variations'
-import TargetingRules from './components/targeting-rules'
-import DefaultRule from './components/default-rule'
+import { DefaultRule } from './components/default-rule'
+import { FlagMetadata } from './components/flag-metadata'
+import { FlagVariations } from './components/flag-variations'
 import JsonPreview from './components/json-preview'
-
-const defaultValues: FlagFormValues = {
-  flagName: 'my-new-feature',
-  description: '',
-  enabled: true,
-  variations: [
-    { id: newId(), key: 'on', value: 'true' },
-    { id: newId(), key: 'off', value: 'false' },
-  ],
-  targeting: [],
-  defaultVariation: 'off',
-}
+import { TargetingRules } from './components/targeting-rules'
+import { useAppForm } from './hooks/form-hook'
+import { featureFlagFormOptions } from './lib/form-options'
 
 function YourCode() {
-  const form = useAppForm({
-    defaultValues,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validators: { onSubmit: flagFormSchema as any },
-  })
+  const form = useAppForm(featureFlagFormOptions)
 
   return (
     <form.AppForm>
@@ -36,10 +19,10 @@ function YourCode() {
         className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start"
       >
         <div className="flex flex-col gap-5">
-          <FlagMetadata />
-          <FlagVariations />
-          <TargetingRules />
-          <DefaultRule />
+          <FlagMetadata form={form} />
+          <FlagVariations form={form} />
+          <TargetingRules form={form} />
+          <DefaultRule form={form} />
         </div>
         <div className="lg:sticky lg:top-4">
           <JsonPreview />

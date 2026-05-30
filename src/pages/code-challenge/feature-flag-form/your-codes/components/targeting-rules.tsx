@@ -1,25 +1,11 @@
-import { PlusIcon, GripVerticalIcon, Trash2Icon } from 'lucide-react'
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core'
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-  arrayMove,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { useFormContext } from '../form-hook'
-import { newId } from '../utils'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '#/components/ui/card'
 import { Button } from '#/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '#/components/ui/card'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import {
@@ -30,8 +16,29 @@ import {
   SelectValue,
 } from '#/components/ui/select'
 import { Separator } from '#/components/ui/separator'
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { GripVerticalIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { useFormContext, withForm } from '../hooks/form-hook'
+import { featureFlagFormOptions } from '../lib/form-options'
+import type { FlagFormValues } from '../lib/schema'
+import { newId } from '../lib/utils'
 import RuleGroupNode from './rule-group'
-import type { FlagFormValues } from '../schema'
 
 interface SortableRuleProps {
   ruleId: string
@@ -40,10 +47,22 @@ interface SortableRuleProps {
   onRemove: () => void
 }
 
-function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRuleProps) {
+function SortableRule({
+  ruleId,
+  index,
+  variationKeys,
+  onRemove,
+}: SortableRuleProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form = useFormContext() as any
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: ruleId,
   })
 
@@ -69,7 +88,9 @@ function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRulePr
         >
           <GripVerticalIcon className="size-4" />
         </button>
-        <span className="text-xs font-medium text-muted-foreground">Rule {index + 1}</span>
+        <span className="text-xs font-medium text-muted-foreground">
+          Rule {index + 1}
+        </span>
         <Button
           type="button"
           variant="ghost"
@@ -102,7 +123,9 @@ function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRulePr
         >
           {(f: any) => (
             <div className="flex flex-col gap-1 w-28">
-              <Label className="text-xs text-muted-foreground">Percentage (%)</Label>
+              <Label className="text-xs text-muted-foreground">
+                Percentage (%)
+              </Label>
               <Input
                 type="number"
                 min={1}
@@ -115,7 +138,9 @@ function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRulePr
                 className="h-8 text-xs"
               />
               {f.state.meta.errors.length > 0 && (
-                <p className="text-[11px] text-destructive">{f.state.meta.errors[0]}</p>
+                <p className="text-[11px] text-destructive">
+                  {f.state.meta.errors[0]}
+                </p>
               )}
             </div>
           )}
@@ -124,14 +149,18 @@ function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRulePr
         <form.Field
           name={`targeting[${index}].variation`}
           validators={{
-            onBlur: ({ value }: any) => (!value ? 'Select a variation' : undefined),
+            onBlur: ({ value }: any) =>
+              !value ? 'Select a variation' : undefined,
           }}
         >
           {(f: any) => (
             <div className="flex flex-col gap-1 flex-1">
               <Label className="text-xs text-muted-foreground">Variation</Label>
-              <Select value={f.state.value} onValueChange={f.handleChange}>
-                <SelectTrigger className="h-8 text-xs" aria-invalid={f.state.meta.errors.length > 0}>
+              <Select value={f.state.value || null!} onValueChange={f.handleChange}>
+                <SelectTrigger
+                  className="h-8 text-xs"
+                  aria-invalid={f.state.meta.errors.length > 0}
+                >
                   <SelectValue placeholder="Select variation" />
                 </SelectTrigger>
                 <SelectContent>
@@ -149,7 +178,9 @@ function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRulePr
                 </SelectContent>
               </Select>
               {f.state.meta.errors.length > 0 && (
-                <p className="text-[11px] text-destructive">{f.state.meta.errors[0]}</p>
+                <p className="text-[11px] text-destructive">
+                  {f.state.meta.errors[0]}
+                </p>
               )}
             </div>
           )}
@@ -159,96 +190,107 @@ function SortableRule({ ruleId, index, variationKeys, onRemove }: SortableRulePr
   )
 }
 
-export default function TargetingRules() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const form = useFormContext() as any
+export const TargetingRules = withForm({
+  ...featureFlagFormOptions,
+  render: ({ form }: { form: any }) => {
+    const sensors = useSensors(
+      useSensor(PointerSensor),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      }),
+    )
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  )
+    const handleDragEnd = (event: DragEndEvent) => {
+      const { active, over } = event
+      if (!over || active.id === over.id) return
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    if (!over || active.id === over.id) return
+      const targeting: FlagFormValues['targeting'] = (form as any).state.values
+        .targeting
+      const oldIdx = targeting.findIndex((r) => r.id === active.id)
+      const newIdx = targeting.findIndex((r) => r.id === over.id)
+      if (oldIdx === -1 || newIdx === -1) return
+      ;(form as any).setFieldValue(
+        'targeting',
+        arrayMove(targeting, oldIdx, newIdx),
+      )
+    }
 
-    const targeting: FlagFormValues['targeting'] = (form as any).state.values.targeting
-    const oldIdx = targeting.findIndex((r) => r.id === active.id)
-    const newIdx = targeting.findIndex((r) => r.id === over.id)
-    if (oldIdx === -1 || newIdx === -1) return
+    return (
+      <Card>
+        <CardHeader className="border-b">
+          <CardTitle>Targeting Rules</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <form.Field name="targeting" mode="array">
+            {(field: any) => {
+              const targeting: FlagFormValues['targeting'] = field.state.value
+              const variationKeys: string[] = (
+                form as any
+              ).state.values.variations.map((v: any) => v.key)
+              const ids = targeting.map((r) => r.id)
 
-    ;(form as any).setFieldValue('targeting', arrayMove(targeting, oldIdx, newIdx))
-  }
+              if (targeting.length === 0) {
+                return (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    No targeting rules. The default rule will apply to all
+                    users.
+                  </p>
+                )
+              }
 
-  return (
-    <Card>
-      <CardHeader className="border-b">
-        <CardTitle>Targeting Rules</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-4">
-        <form.Field name="targeting" mode="array">
-          {(field: any) => {
-            const targeting: FlagFormValues['targeting'] = field.state.value
-            const variationKeys: string[] = (form as any).state.values.variations.map(
-              (v: any) => v.key,
-            )
-            const ids = targeting.map((r) => r.id)
-
-            if (targeting.length === 0) {
               return (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  No targeting rules. The default rule will apply to all users.
-                </p>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={ids}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="flex flex-col gap-3">
+                      {targeting.map((rule, i) => (
+                        <SortableRule
+                          key={rule.id}
+                          ruleId={rule.id}
+                          index={i}
+                          variationKeys={variationKeys}
+                          onRemove={() => field.removeValue(i)}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               )
-            }
-
-            return (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-                  <div className="flex flex-col gap-3">
-                    {targeting.map((rule, i) => (
-                      <SortableRule
-                        key={rule.id}
-                        ruleId={rule.id}
-                        index={i}
-                        variationKeys={variationKeys}
-                        onRemove={() => field.removeValue(i)}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )
-          }}
-        </form.Field>
-      </CardContent>
-      <CardFooter>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() =>
-            (form as any).pushFieldValue('targeting', {
-              id: newId(),
-              queryGroup: {
+            }}
+          </form.Field>
+        </CardContent>
+        <CardFooter>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              (form as any).pushFieldValue('targeting', {
                 id: newId(),
-                connector: 'AND',
-                conditions: [{ id: newId(), field: '', operator: '==', value: '' }],
-                groups: [],
-              },
-              percentage: 100,
-              variation: (form as any).state.values.variations[0]?.key ?? '',
-            })
-          }
-        >
-          <PlusIcon data-icon="inline-start" />
-          Add Rule
-        </Button>
-      </CardFooter>
-    </Card>
-  )
-}
+                queryGroup: {
+                  id: newId(),
+                  connector: 'AND',
+                  conditions: [
+                    { id: newId(), field: '', operator: '==', value: '' },
+                  ],
+                  groups: [],
+                },
+                percentage: 100,
+                variation: (form as any).state.values.variations[0]?.key ?? '',
+              })
+            }
+          >
+            <PlusIcon data-icon="inline-start" />
+            Add Rule
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  },
+})
