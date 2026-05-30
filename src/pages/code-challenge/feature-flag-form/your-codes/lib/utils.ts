@@ -2,6 +2,23 @@ import type { FlagFormValues, RuleGroup } from './schema'
 
 export const newId = () => crypto.randomUUID()
 
+export function isFieldInvalid(meta: {
+  isTouched: boolean
+  isValid: boolean
+}) {
+  return meta.isTouched && !meta.isValid
+}
+
+export function normalizeFieldErrors(
+  errors: Array<unknown>,
+): Array<{ message?: string } | undefined> {
+  return errors.map((error) =>
+    typeof error === 'string'
+      ? { message: error }
+      : (error as { message?: string }),
+  )
+}
+
 export const parseVariationValue = (v: string): string | boolean | number => {
   if (v === 'true') return true
   if (v === 'false') return false

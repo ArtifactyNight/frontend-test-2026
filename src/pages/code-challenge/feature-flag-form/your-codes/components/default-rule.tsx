@@ -1,5 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
-import { Label } from '#/components/ui/label'
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '#/components/ui/field'
 import {
   Select,
   SelectContent,
@@ -9,6 +15,7 @@ import {
 } from '#/components/ui/select'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
+import { isFieldInvalid, normalizeFieldErrors } from '../lib/utils'
 
 export const DefaultRule = withForm({
   ...featureFlagFormOptions,
@@ -18,56 +25,64 @@ export const DefaultRule = withForm({
         <CardTitle>Default Rule</CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
-        <p className="text-xs text-muted-foreground mb-3">
-          Fallback variation served to users who don't match any targeting rule.
-        </p>
-        <form.AppField
-          name="defaultVariation"
-          validators={{
-            onBlur: ({ value }) =>
-              !value ? 'Select a default variation' : undefined,
-          }}
-        >
-          {(field) => {
-            const variationKeys: string[] = form.state.values.variations.map((v) => v.key)
-            return (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="defaultVariation">
-                  Default Variation <span className="text-destructive">*</span>
-                </Label>
-                <Select
-                  value={field.state.value}
-                  onValueChange={field.handleChange}
-                >
-                  <SelectTrigger
-                    id="defaultVariation"
-                    aria-invalid={field.state.meta.errors.length > 0}
+        <FieldGroup>
+          <form.AppField
+            name="defaultVariation"
+            validators={{
+              onBlur: ({ value }) =>
+                !value ? 'Select a default variation' : undefined,
+            }}
+          >
+            {(field) => {
+              const variationKeys: string[] = form.state.values.variations.map(
+                (v) => v.key,
+              )
+              const isInvalid = isFieldInvalid(field.state.meta)
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor="defaultVariation">
+                    Default Variation{' '}
+                    <span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <Select
+                    name={field.name}
+                    value={field.state.value}
+                    onValueChange={field.handleChange}
                   >
-                    <SelectValue placeholder="Select a variation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {variationKeys.length === 0 ? (
-                      <SelectItem value="_none" disabled>
-                        Add variations first
-                      </SelectItem>
-                    ) : (
-                      variationKeys.map((key) => (
-                        <SelectItem key={key} value={key}>
-                          {key}
+                    <SelectTrigger
+                      id="defaultVariation"
+                      aria-invalid={isInvalid}
+                    >
+                      <SelectValue placeholder="Select a variation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {variationKeys.length === 0 ? (
+                        <SelectItem value="_none" disabled>
+                          Add variations first
                         </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-                {field.state.meta.errors.length > 0 && (
-                  <p className="text-xs text-destructive">
-                    {field.state.meta.errors[0]}
-                  </p>
-                )}
-              </div>
-            )
-          }}
-        </form.AppField>
+                      ) : (
+                        variationKeys.map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {key}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FieldDescription>
+                    Fallback variation served to users who don&apos;t match any
+                    targeting rule.
+                  </FieldDescription>
+                  {isInvalid && (
+                    <FieldError
+                      errors={normalizeFieldErrors(field.state.meta.errors)}
+                    />
+                  )}
+                </Field>
+              )
+            }}
+          </form.AppField>
+        </FieldGroup>
       </CardContent>
     </Card>
   ),

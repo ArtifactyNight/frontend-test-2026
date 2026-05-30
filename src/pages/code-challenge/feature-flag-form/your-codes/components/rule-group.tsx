@@ -1,4 +1,5 @@
 import { Button } from '#/components/ui/button'
+import { Field, FieldError } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
 import {
   Select,
@@ -12,7 +13,7 @@ import { cn } from '#/lib/utils'
 import { LayersIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { useFormContext } from '../hooks/form-hook'
 import { OPERATORS } from '../lib/schema'
-import { newId } from '../lib/utils'
+import { isFieldInvalid, newId, normalizeFieldErrors } from '../lib/utils'
 
 const DEPTH_COLORS = [
   'border-blue-500/50',
@@ -102,21 +103,31 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
               return (
                 <div key={condId} className="flex items-start gap-1.5">
                   <form.AppField name={`${basePath}.conditions[${i}].field`}>
-                    {(f: any) => (
-                      <div className="flex flex-col gap-1 min-w-0 flex-1">
-                        <Input
-                          placeholder="field"
-                          value={f.state.value}
-                          onChange={(e: any) => f.handleChange(e.target.value)}
-                          onBlur={f.handleBlur}
-                          aria-invalid={f.state.meta.errors.length > 0}
-                          className="h-8 text-xs"
-                        />
-                        {f.state.meta.errors.length > 0 && (
-                          <p className="text-[11px] text-destructive">{f.state.meta.errors[0]}</p>
-                        )}
-                      </div>
-                    )}
+                    {(f: any) => {
+                      const isInvalid = isFieldInvalid(f.state.meta)
+                      return (
+                        <Field
+                          className="min-w-0 flex-1"
+                          data-invalid={isInvalid}
+                        >
+                          <Input
+                            placeholder="field"
+                            value={f.state.value}
+                            onChange={(e: any) =>
+                              f.handleChange(e.target.value)
+                            }
+                            onBlur={f.handleBlur}
+                            aria-invalid={isInvalid}
+                            className="h-8 text-xs"
+                          />
+                          {isInvalid && (
+                            <FieldError
+                              errors={normalizeFieldErrors(f.state.meta.errors)}
+                            />
+                          )}
+                        </Field>
+                      )
+                    }}
                   </form.AppField>
 
                   <form.AppField name={`${basePath}.conditions[${i}].operator`}>
@@ -137,21 +148,31 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
                   </form.AppField>
 
                   <form.AppField name={`${basePath}.conditions[${i}].value`}>
-                    {(f: any) => (
-                      <div className="flex flex-col gap-1 min-w-0 flex-1">
-                        <Input
-                          placeholder="value"
-                          value={f.state.value}
-                          onChange={(e: any) => f.handleChange(e.target.value)}
-                          onBlur={f.handleBlur}
-                          aria-invalid={f.state.meta.errors.length > 0}
-                          className="h-8 text-xs"
-                        />
-                        {f.state.meta.errors.length > 0 && (
-                          <p className="text-[11px] text-destructive">{f.state.meta.errors[0]}</p>
-                        )}
-                      </div>
-                    )}
+                    {(f: any) => {
+                      const isInvalid = isFieldInvalid(f.state.meta)
+                      return (
+                        <Field
+                          className="min-w-0 flex-1"
+                          data-invalid={isInvalid}
+                        >
+                          <Input
+                            placeholder="value"
+                            value={f.state.value}
+                            onChange={(e: any) =>
+                              f.handleChange(e.target.value)
+                            }
+                            onBlur={f.handleBlur}
+                            aria-invalid={isInvalid}
+                            className="h-8 text-xs"
+                          />
+                          {isInvalid && (
+                            <FieldError
+                              errors={normalizeFieldErrors(f.state.meta.errors)}
+                            />
+                          )}
+                        </Field>
+                      )
+                    }}
                   </form.AppField>
 
                   <Button
