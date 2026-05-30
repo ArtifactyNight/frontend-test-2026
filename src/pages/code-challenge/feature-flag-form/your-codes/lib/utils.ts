@@ -7,10 +7,7 @@ import type {
 
 export const newId = () => crypto.randomUUID()
 
-export function isFieldInvalid(meta: {
-  isTouched: boolean
-  isValid: boolean
-}) {
+export function isFieldInvalid(meta: { isTouched: boolean; isValid: boolean }) {
   return meta.isTouched && !meta.isValid
 }
 
@@ -190,7 +187,9 @@ export function syncFormServesWithVariations(
   }
 }
 
-export const buildOutput = (values: FlagFormValues) => {
+export const buildOutput = (
+  values: FlagFormValues,
+): Record<string, unknown> => {
   const flagConfig: Record<string, unknown> = {
     variations: Object.fromEntries(
       values.variations.map((v) => [v.key, parseVariationValue(v.value)]),

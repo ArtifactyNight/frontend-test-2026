@@ -1,7 +1,7 @@
 import { DefaultRule } from './components/default-rule'
 import { FlagMetadata } from './components/flag-metadata'
 import { FlagVariations } from './components/flag-variations'
-import JsonPreview from './components/json-preview'
+import { JsonPreview } from './components/json-preview'
 import { TargetingRules } from './components/targeting-rules'
 import { VariationSync } from './components/variation-sync'
 import { useAppForm } from './hooks/form-hook'
@@ -27,7 +27,7 @@ function YourCode() {
           <DefaultRule form={form} />
         </div>
         <div className="lg:sticky lg:top-4">
-          <JsonPreview />
+          <JsonPreview form={form} />
         </div>
       </form>
     </form.AppForm>
