@@ -191,6 +191,7 @@ export const buildOutput = (
   values: FlagFormValues,
 ): Record<string, unknown> => {
   const flagConfig: Record<string, unknown> = {
+    enabled: values.enabled,
     variations: Object.fromEntries(
       values.variations.map((v) => [v.key, parseVariationValue(v.value)]),
     ),
