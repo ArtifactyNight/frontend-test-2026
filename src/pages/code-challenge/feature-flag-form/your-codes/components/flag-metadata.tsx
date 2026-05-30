@@ -24,7 +24,7 @@ export const FlagMetadata = withForm({
           <form.AppField
             name="flagName"
             validators={{
-              onBlur: ({ value }: any) => {
+              onBlur: ({ value }) => {
                 if (!value) return 'Flag name is required'
                 if (!/^[a-z0-9-]+$/.test(value))
                   return 'Lowercase letters, numbers and hyphens only'
@@ -32,7 +32,7 @@ export const FlagMetadata = withForm({
               },
             }}
           >
-            {(field: any) => (
+            {(field) => (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="flagName">
                   Flag Name <span className="text-destructive">*</span>
@@ -41,7 +41,7 @@ export const FlagMetadata = withForm({
                   id="flagName"
                   placeholder="my-feature-flag"
                   value={field.state.value}
-                  onChange={(e: any) => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   aria-invalid={field.state.meta.errors.length > 0}
                 />
@@ -63,7 +63,7 @@ export const FlagMetadata = withForm({
                   placeholder="What does this flag control?"
                   rows={2}
                   value={field.state.value}
-                  onChange={(e: any) => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
                   className="resize-none"
                 />

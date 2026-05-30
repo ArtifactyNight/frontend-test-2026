@@ -36,7 +36,7 @@ export const FlagVariations = withForm({
       </CardHeader>
       <CardContent className="pt-4">
         <form.AppField name="variations" mode="array">
-          {(field: any) => (
+          {(field) => (
             <div className="flex flex-col gap-3">
               {field.state.value.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-2">
@@ -44,7 +44,7 @@ export const FlagVariations = withForm({
                 </p>
               )}
 
-              {field.state.value.map((_: any, i: number) => {
+              {field.state.value.map((_, i) => {
                 const valueStr = field.state.value[i]?.value ?? ''
                 const type = getValueType(valueStr)
                 return (
@@ -53,7 +53,7 @@ export const FlagVariations = withForm({
                     className="flex items-start gap-2"
                   >
                     <form.AppField name={`variations[${i}].key`}>
-                      {(keyField: any) => (
+                      {(keyField) => (
                         <div className="flex flex-col gap-1 flex-1">
                           {i === 0 && (
                             <Label className="text-xs text-muted-foreground">
@@ -63,7 +63,7 @@ export const FlagVariations = withForm({
                           <Input
                             placeholder="on"
                             value={keyField.state.value}
-                            onChange={(e: any) =>
+                            onChange={(e) =>
                               keyField.handleChange(e.target.value)
                             }
                             onBlur={keyField.handleBlur}
@@ -79,7 +79,7 @@ export const FlagVariations = withForm({
                     </form.AppField>
 
                     <form.AppField name={`variations[${i}].value`}>
-                      {(valField: any) => (
+                      {(valField) => (
                         <div className="flex flex-col gap-1 flex-1">
                           {i === 0 && (
                             <div className="flex items-center gap-1.5">
@@ -92,7 +92,7 @@ export const FlagVariations = withForm({
                             <Input
                               placeholder="true"
                               value={valField.state.value}
-                              onChange={(e: any) =>
+                              onChange={(e) =>
                                 valField.handleChange(e.target.value)
                               }
                               onBlur={valField.handleBlur}
@@ -143,7 +143,7 @@ export const FlagVariations = withForm({
           variant="outline"
           size="sm"
           onClick={() =>
-            (form as any).pushFieldValue('variations', {
+            form.pushFieldValue('variations', {
               id: newId(),
               key: '',
               value: '',
