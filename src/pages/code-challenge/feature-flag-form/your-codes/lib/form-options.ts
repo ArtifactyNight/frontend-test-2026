@@ -1,13 +1,28 @@
 import { formOptions } from '@tanstack/react-form'
-import type { RuleCondition, RuleGroup } from './schema'
+import type { FlagFormValues, RuleCondition, RuleGroup } from './schema'
 import { flagFormSchema } from './schema'
 import { createDefaultServe, newId } from './utils'
 
+function validateFlagForm({ value }: { value: FlagFormValues }) {
+  const result = flagFormSchema.safeParse(value)
+  if (result.success) return undefined
+
+  const fields: Record<string, string> = {}
+  for (const issue of result.error.issues) {
+    const path = issue.path.reduce<string>((acc, segment, i) => {
+      if (typeof segment === 'number') return `${acc}[${segment}]`
+      return i === 0 ? String(segment) : `${acc}.${String(segment)}`
+    }, '')
+    if (path && !(path in fields)) fields[path] = issue.message
+  }
+
+  return { fields }
+}
+
 export const featureFlagFormOptions = formOptions({
   validators: {
-    onBlur: flagFormSchema.parse,
-    onSubmit: flagFormSchema.parse,
-    onChange: flagFormSchema.parse,
+    onBlur: validateFlagForm,
+    onSubmit: validateFlagForm,
   },
   defaultValues: {
     flagName: 'my-new-feature',

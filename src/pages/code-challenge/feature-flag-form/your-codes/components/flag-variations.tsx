@@ -18,6 +18,7 @@ import { Input } from '#/components/ui/input'
 import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
+import type { Variation } from '../lib/schema'
 import { isFieldInvalid, newId, normalizeFieldErrors } from '../lib/utils'
 
 function getValueType(v: string): string {
@@ -63,7 +64,7 @@ export const FlagVariations = withForm({
                       </span>
                     </div>
                   )}
-                  {field.state.value.map((_, i) => {
+                  {field.state.value.map((_: Variation, i: number) => {
                     const valueStr = field.state.value[i]?.value ?? ''
                     const type = getValueType(valueStr)
                     return (
@@ -73,14 +74,16 @@ export const FlagVariations = withForm({
                       >
                         <form.AppField name={`variations[${i}].key`}>
                           {(keyField) => {
-                            const isInvalid = isFieldInvalid(keyField.state.meta)
+                            const isInvalid = isFieldInvalid(
+                              keyField.state.meta,
+                            )
                             return (
                               <Field
                                 className="flex-1"
                                 data-invalid={isInvalid}
                               >
                                 <Input
-                                  placeholder="on"
+                                  placeholder="variant_1"
                                   value={keyField.state.value}
                                   onChange={(e) =>
                                     keyField.handleChange(e.target.value)
@@ -102,7 +105,9 @@ export const FlagVariations = withForm({
 
                         <form.AppField name={`variations[${i}].value`}>
                           {(valField) => {
-                            const isInvalid = isFieldInvalid(valField.state.meta)
+                            const isInvalid = isFieldInvalid(
+                              valField.state.meta,
+                            )
                             return (
                               <Field
                                 className="flex-1"

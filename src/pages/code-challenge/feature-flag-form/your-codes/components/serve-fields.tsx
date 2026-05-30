@@ -33,19 +33,33 @@ const serveDefaultValues: ServeConfig = {
 function VariationSelect({
   value,
   onChange,
+  onBlur,
   variationKeys,
   invalid,
   id,
 }: {
   value: string
   onChange: (value: string) => void
+  onBlur?: () => void
   variationKeys: Array<string>
   invalid?: boolean
   id?: string
 }) {
   return (
-    <Select name={id} value={value} onValueChange={onChange}>
-      <SelectTrigger id={id} className="h-8 text-xs" aria-invalid={invalid}>
+    <Select
+      name={id}
+      value={value || null!}
+      onValueChange={onChange}
+      onOpenChange={(open) => {
+        if (!open) onBlur?.()
+      }}
+    >
+      <SelectTrigger
+        id={id}
+        className="h-8 text-xs"
+        aria-invalid={invalid}
+        onBlur={onBlur}
+      >
         <SelectValue placeholder="Select variation" />
       </SelectTrigger>
       <SelectContent>
@@ -82,7 +96,7 @@ export const ServeFields = withFieldGroup({
                 Serve
               </FieldLabel>
               <Select
-                value={field.state.value}
+                value={field.state.value || null!}
                 onValueChange={(value) => {
                   field.handleChange(value as ServeConfig['type'])
                   if (value === 'percentage') {
@@ -135,6 +149,7 @@ export const ServeFields = withFieldGroup({
                     id={field.name}
                     value={field.state.value}
                     onChange={field.handleChange}
+                    onBlur={field.handleBlur}
                     variationKeys={variationKeys}
                     invalid={isInvalid}
                   />
@@ -214,6 +229,7 @@ export const ServeFields = withFieldGroup({
                       <VariationSelect
                         value={field.state.value}
                         onChange={field.handleChange}
+                        onBlur={field.handleBlur}
                         variationKeys={variationKeys}
                         invalid={isInvalid}
                       />
@@ -290,6 +306,7 @@ export const ServeFields = withFieldGroup({
                       <VariationSelect
                         value={field.state.value}
                         onChange={field.handleChange}
+                        onBlur={field.handleBlur}
                         variationKeys={variationKeys}
                         invalid={isInvalid}
                       />

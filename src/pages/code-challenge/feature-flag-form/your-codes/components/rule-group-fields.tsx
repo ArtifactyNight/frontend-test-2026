@@ -143,7 +143,7 @@ export const RuleGroupFields = withFieldGroup({
                       <group.AppField name={`conditions[${i}].operator`}>
                         {(f) => (
                           <Select
-                            value={f.state.value}
+                            value={f.state.value || null!}
                             onValueChange={f.handleChange}
                           >
                             <SelectTrigger className="h-8 w-24 shrink-0 text-xs">
