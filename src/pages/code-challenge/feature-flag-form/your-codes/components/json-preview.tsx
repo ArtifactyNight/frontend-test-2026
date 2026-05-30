@@ -1,12 +1,10 @@
+import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import Editor from '@monaco-editor/react'
 import { useFormContext } from '../hooks/form-hook'
 import { buildOutput } from '../lib/utils'
-import type { FlagFormValues } from '../lib/schema'
-import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 
 export default function JsonPreview() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const form = useFormContext() as any
+  const form = useFormContext()
 
   return (
     <Card className="overflow-hidden">
@@ -14,8 +12,8 @@ export default function JsonPreview() {
         <CardTitle className="font-mono text-sm">output.json</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <form.Subscribe selector={(s: any) => s.values}>
-          {(values: FlagFormValues) => {
+        <form.Subscribe selector={(s) => s.values}>
+          {(values) => {
             const json = JSON.stringify(buildOutput(values), null, 2)
             return (
               <Editor

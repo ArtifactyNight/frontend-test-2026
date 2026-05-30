@@ -29,11 +29,11 @@ interface RuleGroupNodeProps {
 }
 
 export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGroupNodeProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const form = useFormContext() as any
+   
+  const form = useFormContext()
 
   const addCondition = () => {
-    ;(form as any).pushFieldValue(`${basePath}.conditions`, {
+    form.pushFieldValue(`${basePath}.conditions`, {
       id: newId(),
       field: '',
       operator: '==',
@@ -42,7 +42,7 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
   }
 
   const addSubGroup = () => {
-    ;(form as any).pushFieldValue(`${basePath}.groups`, {
+    form.pushFieldValue(`${basePath}.groups`, {
       id: newId(),
       connector: 'AND',
       conditions: [],
@@ -65,7 +65,7 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
         <div className="flex items-center gap-2">
           <LayersIcon className="size-3.5 text-muted-foreground" />
           <span className="text-xs font-medium text-muted-foreground">Group</span>
-          <form.Field name={`${basePath}.connector`}>
+          <form.AppField name={`${basePath}.connector`}>
             {(connField: any) => (
               <ToggleGroup
                 type="single"
@@ -78,7 +78,7 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
                 <ToggleGroupItem value="OR" variant="outline">OR</ToggleGroupItem>
               </ToggleGroup>
             )}
-          </form.Field>
+          </form.AppField>
         </div>
         {onRemove && (
           <Button
@@ -94,14 +94,14 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
       </div>
 
       {/* Conditions */}
-      <form.Field name={`${basePath}.conditions`} mode="array">
+      <form.AppField name={`${basePath}.conditions`} mode="array">
         {(conditionsField: any) => (
           <div className="flex flex-col gap-2">
             {conditionsField.state.value.map((_: any, i: number) => {
               const condId = conditionsField.state.value[i]?.id ?? i
               return (
                 <div key={condId} className="flex items-start gap-1.5">
-                  <form.Field name={`${basePath}.conditions[${i}].field`}>
+                  <form.AppField name={`${basePath}.conditions[${i}].field`}>
                     {(f: any) => (
                       <div className="flex flex-col gap-1 min-w-0 flex-1">
                         <Input
@@ -117,9 +117,9 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
                         )}
                       </div>
                     )}
-                  </form.Field>
+                  </form.AppField>
 
-                  <form.Field name={`${basePath}.conditions[${i}].operator`}>
+                  <form.AppField name={`${basePath}.conditions[${i}].operator`}>
                     {(f: any) => (
                       <Select value={f.state.value || null!} onValueChange={f.handleChange}>
                         <SelectTrigger className="h-8 w-24 shrink-0 text-xs">
@@ -134,9 +134,9 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
                         </SelectContent>
                       </Select>
                     )}
-                  </form.Field>
+                  </form.AppField>
 
-                  <form.Field name={`${basePath}.conditions[${i}].value`}>
+                  <form.AppField name={`${basePath}.conditions[${i}].value`}>
                     {(f: any) => (
                       <div className="flex flex-col gap-1 min-w-0 flex-1">
                         <Input
@@ -152,7 +152,7 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
                         )}
                       </div>
                     )}
-                  </form.Field>
+                  </form.AppField>
 
                   <Button
                     type="button"
@@ -168,10 +168,10 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
             })}
           </div>
         )}
-      </form.Field>
+      </form.AppField>
 
       {/* Nested groups */}
-      <form.Field name={`${basePath}.groups`} mode="array">
+      <form.AppField name={`${basePath}.groups`} mode="array">
         {(groupsField: any) => (
           <div className="flex flex-col gap-2">
             {groupsField.state.value.map((_: any, i: number) => {
@@ -187,7 +187,7 @@ export default function RuleGroupNode({ basePath, depth = 0, onRemove }: RuleGro
             })}
           </div>
         )}
-      </form.Field>
+      </form.AppField>
 
       {/* Add buttons */}
       <div className="flex gap-2">

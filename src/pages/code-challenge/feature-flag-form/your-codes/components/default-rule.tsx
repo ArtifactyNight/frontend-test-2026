@@ -21,7 +21,7 @@ export const DefaultRule = withForm({
         <p className="text-xs text-muted-foreground mb-3">
           Fallback variation served to users who don't match any targeting rule.
         </p>
-        <form.Field
+        <form.AppField
           name="defaultVariation"
           validators={{
             onBlur: ({ value }) =>
@@ -67,7 +67,7 @@ export const DefaultRule = withForm({
               </div>
             )
           }}
-        </form.Field>
+        </form.AppField>
       </CardContent>
     </Card>
   ),

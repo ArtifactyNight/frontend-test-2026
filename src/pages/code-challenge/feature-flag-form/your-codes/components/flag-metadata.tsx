@@ -82,7 +82,7 @@ export const FlagMetadata = withForm({
                 </FieldContent>
                 <Switch
                   id="enabled"
-                  defaultChecked={false}
+                  defaultChecked={field.state.value}
                   onCheckedChange={field.handleChange}
                   aria-invalid={field.state.meta.errors.length > 0}
                 />

@@ -35,7 +35,7 @@ export const FlagVariations = withForm({
         <CardTitle>Variations</CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
-        <form.Field name="variations" mode="array">
+        <form.AppField name="variations" mode="array">
           {(field: any) => (
             <div className="flex flex-col gap-3">
               {field.state.value.length === 0 && (
@@ -52,7 +52,7 @@ export const FlagVariations = withForm({
                     key={field.state.value[i]?.id ?? i}
                     className="flex items-start gap-2"
                   >
-                    <form.Field name={`variations[${i}].key`}>
+                    <form.AppField name={`variations[${i}].key`}>
                       {(keyField: any) => (
                         <div className="flex flex-col gap-1 flex-1">
                           {i === 0 && (
@@ -76,9 +76,9 @@ export const FlagVariations = withForm({
                           )}
                         </div>
                       )}
-                    </form.Field>
+                    </form.AppField>
 
-                    <form.Field name={`variations[${i}].value`}>
+                    <form.AppField name={`variations[${i}].value`}>
                       {(valField: any) => (
                         <div className="flex flex-col gap-1 flex-1">
                           {i === 0 && (
@@ -116,7 +116,7 @@ export const FlagVariations = withForm({
                           )}
                         </div>
                       )}
-                    </form.Field>
+                    </form.AppField>
 
                     <div className={i === 0 ? 'mt-5' : ''}>
                       <Button
@@ -135,7 +135,7 @@ export const FlagVariations = withForm({
               })}
             </div>
           )}
-        </form.Field>
+        </form.AppField>
       </CardContent>
       <CardFooter>
         <Button

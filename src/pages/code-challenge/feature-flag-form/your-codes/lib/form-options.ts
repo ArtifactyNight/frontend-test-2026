@@ -12,17 +12,19 @@ export const featureFlagFormOptions = formOptions({
       { id: newId(), key: 'on', value: 'true' },
       { id: newId(), key: 'off', value: 'false' },
     ],
-    targeting: [] as Array<{
-      id: string
-      queryGroup: {
-        id: string
-        connector: 'AND' | 'OR'
-        conditions: Array<{ id: string; field: string; operator: string; value: string }>
-        groups: never[]
-      }
-      percentage: number
-      variation: string
-    }>,
+    targeting: [
+      {
+        id: newId(),
+        queryGroup: {
+          id: newId(),
+          connector: 'AND',
+          conditions: [],
+          groups: [],
+        },
+        percentage: 100,
+        variation: 'on',
+      },
+    ],
     defaultVariation: 'on',
   },
 })

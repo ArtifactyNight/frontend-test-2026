@@ -16,14 +16,14 @@ import {
   SelectValue,
 } from '#/components/ui/select'
 import { Separator } from '#/components/ui/separator'
+import type { DragEndEvent } from '@dnd-kit/core'
 import {
   closestCenter,
   DndContext,
   KeyboardSensor,
   PointerSensor,
   useSensor,
-  useSensors,
-  type DragEndEvent,
+  useSensors
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -53,8 +53,8 @@ function SortableRule({
   variationKeys,
   onRemove,
 }: SortableRuleProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const form = useFormContext() as any
+   
+  const form = useFormContext()
   const {
     attributes,
     listeners,
@@ -109,10 +109,10 @@ function SortableRule({
 
       {/* Percentage + Variation */}
       <div className="flex gap-3">
-        <form.Field
-          name={`targeting[${index}].percentage`}
+        <form.AppField
+          name={`targeting[${index}].percentage` as any}
           validators={{
-            onBlur: ({ value }: any) => {
+            onBlur: ({ value }) => {
               const n = Number(value)
               if (isNaN(n)) return 'Must be a number'
               if (n < 1) return 'Min 1'
@@ -144,9 +144,9 @@ function SortableRule({
               )}
             </div>
           )}
-        </form.Field>
+        </form.AppField>
 
-        <form.Field
+        <form.AppField
           name={`targeting[${index}].variation`}
           validators={{
             onBlur: ({ value }: any) =>
@@ -184,7 +184,7 @@ function SortableRule({
               )}
             </div>
           )}
-        </form.Field>
+        </form.AppField>
       </div>
     </div>
   )
@@ -204,12 +204,12 @@ export const TargetingRules = withForm({
       const { active, over } = event
       if (!over || active.id === over.id) return
 
-      const targeting: FlagFormValues['targeting'] = (form as any).state.values
+      const targeting: FlagFormValues['targeting'] = (form).state.values
         .targeting
       const oldIdx = targeting.findIndex((r) => r.id === active.id)
       const newIdx = targeting.findIndex((r) => r.id === over.id)
       if (oldIdx === -1 || newIdx === -1) return
-      ;(form as any).setFieldValue(
+      ;(form).setFieldValue(
         'targeting',
         arrayMove(targeting, oldIdx, newIdx),
       )
@@ -221,11 +221,11 @@ export const TargetingRules = withForm({
           <CardTitle>Targeting Rules</CardTitle>
         </CardHeader>
         <CardContent className="pt-4">
-          <form.Field name="targeting" mode="array">
+          <form.AppField name="targeting" mode="array">
             {(field: any) => {
               const targeting: FlagFormValues['targeting'] = field.state.value
               const variationKeys: string[] = (
-                form as any
+                form
               ).state.values.variations.map((v: any) => v.key)
               const ids = targeting.map((r) => r.id)
 
@@ -263,7 +263,7 @@ export const TargetingRules = withForm({
                 </DndContext>
               )
             }}
-          </form.Field>
+          </form.AppField>
         </CardContent>
         <CardFooter>
           <Button
@@ -271,7 +271,7 @@ export const TargetingRules = withForm({
             variant="outline"
             size="sm"
             onClick={() =>
-              (form as any).pushFieldValue('targeting', {
+              (form).pushFieldValue('targeting', {
                 id: newId(),
                 queryGroup: {
                   id: newId(),
@@ -282,7 +282,7 @@ export const TargetingRules = withForm({
                   groups: [],
                 },
                 percentage: 100,
-                variation: (form as any).state.values.variations[0]?.key ?? '',
+                variation: (form).state.values.variations[0]?.key ?? '',
               })
             }
           >
