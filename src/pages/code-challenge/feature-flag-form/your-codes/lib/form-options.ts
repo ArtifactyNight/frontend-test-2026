@@ -4,7 +4,11 @@ import { flagFormSchema } from './schema'
 import { createDefaultServe, newId } from './utils'
 
 export const featureFlagFormOptions = formOptions({
-  validators: { onSubmit: flagFormSchema.parse },
+  validators: {
+    onBlur: flagFormSchema.parse,
+    onSubmit: flagFormSchema.parse,
+    onChange: flagFormSchema.parse,
+  },
   defaultValues: {
     flagName: 'my-new-feature',
     description: '',

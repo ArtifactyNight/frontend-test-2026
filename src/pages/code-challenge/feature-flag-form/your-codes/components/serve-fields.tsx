@@ -1,5 +1,6 @@
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
+import { MaskInput } from '#/components/ui/mask-input'
 import {
   Select,
   SelectContent,
@@ -165,17 +166,23 @@ export const ServeFields = withFieldGroup({
                       <FieldLabel className="text-xs text-muted-foreground">
                         {key}
                       </FieldLabel>
-                      <Input
-                        type="number"
+                      <MaskInput
+                        mask="percentage"
+                        placeholder="0.00%"
                         min={0}
+                        max={100}
                         className="h-8 text-xs"
-                        value={field.state.value[key] ?? 0}
-                        onChange={(e) =>
+                        value={String(field.state.value[key] ?? 0)}
+                        onValueChange={(_maskedValue, unmaskedValue) => {
+                          const parsed =
+                            unmaskedValue === '' || unmaskedValue === '.'
+                              ? 0
+                              : parseFloat(unmaskedValue)
                           field.handleChange({
                             ...field.state.value,
-                            [key]: Number(e.target.value),
+                            [key]: Number.isNaN(parsed) ? 0 : parsed,
                           })
-                        }
+                        }}
                         onBlur={field.handleBlur}
                       />
                     </Field>
