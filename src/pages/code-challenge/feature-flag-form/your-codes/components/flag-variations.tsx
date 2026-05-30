@@ -15,6 +15,11 @@ import {
   FieldSet,
 } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '#/components/ui/input-group'
 import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
@@ -64,10 +69,7 @@ export const FlagVariations = withForm({
                       </span>
                     </div>
                   )}
-                  {field.state.value.map((_: Variation, i: number) => {
-                    const valueStr = field.state.value[i]?.value ?? ''
-                    const type = getValueType(valueStr)
-                    return (
+                  {field.state.value.map((_: Variation, i: number) => (
                       <div
                         key={field.state.value[i]?.id ?? i}
                         className="flex items-start gap-2"
@@ -108,13 +110,14 @@ export const FlagVariations = withForm({
                             const isInvalid = isFieldInvalid(
                               valField.state.meta,
                             )
+                            const type = getValueType(valField.state.value)
                             return (
                               <Field
                                 className="flex-1"
                                 data-invalid={isInvalid}
                               >
-                                <div className="relative">
-                                  <Input
+                                <InputGroup>
+                                  <InputGroupInput
                                     placeholder="true"
                                     value={valField.state.value}
                                     onChange={(e) =>
@@ -124,16 +127,18 @@ export const FlagVariations = withForm({
                                     aria-invalid={isInvalid}
                                   />
                                   {type && (
-                                    <Badge
-                                      variant={
-                                        typeBadgeVariant[type] ?? 'outline'
-                                      }
-                                      className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] h-4 px-1"
-                                    >
-                                      {type}
-                                    </Badge>
+                                    <InputGroupAddon align="inline-end">
+                                      <Badge
+                                        variant={
+                                          typeBadgeVariant[type] ?? 'outline'
+                                        }
+                                        className="text-[10px] h-4 px-1"
+                                      >
+                                        {type}
+                                      </Badge>
+                                    </InputGroupAddon>
                                   )}
-                                </div>
+                                </InputGroup>
                                 {isInvalid && (
                                   <FieldError
                                     errors={normalizeFieldErrors(
@@ -157,8 +162,7 @@ export const FlagVariations = withForm({
                           <Trash2Icon data-icon="inline-start" />
                         </Button>
                       </div>
-                    )
-                  })}
+                  ))}
                 </FieldGroup>
                 {isArrayInvalid && (
                   <FieldError

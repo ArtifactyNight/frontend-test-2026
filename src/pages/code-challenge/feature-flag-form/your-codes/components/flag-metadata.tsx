@@ -8,6 +8,7 @@ import {
   FieldLabel,
   FieldTitle,
 } from '#/components/ui/field'
+import { Input } from '#/components/ui/input'
 import {
   KeyValue,
   KeyValueAdd,
@@ -17,12 +18,12 @@ import {
   KeyValueRemove,
   KeyValueValueInput,
 } from '#/components/ui/key-value'
-import { Input } from '#/components/ui/input'
+import { Separator } from '#/components/ui/separator'
 import { Switch } from '#/components/ui/switch'
 import { Textarea } from '#/components/ui/textarea'
-import { Separator } from '#/components/ui/separator'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
+import { flagNameSchema } from '../lib/schema'
 import { isFieldInvalid, normalizeFieldErrors } from '../lib/utils'
 
 export const FlagMetadata = withForm({
@@ -38,11 +39,11 @@ export const FlagMetadata = withForm({
             <form.AppField
               name="flagName"
               validators={{
-                onBlur: ({ value }) => {
-                  if (!value) return 'Flag name is required'
-                  if (!/^[a-z0-9-]+$/.test(value))
-                    return 'Lowercase letters, numbers and hyphens only'
-                  return undefined
+                onChange: ({ value }) => {
+                  const result = flagNameSchema.safeParse(value)
+                  return result.success
+                    ? undefined
+                    : result.error.issues[0]?.message
                 },
               }}
             >
@@ -50,9 +51,7 @@ export const FlagMetadata = withForm({
                 const isInvalid = isFieldInvalid(field.state.meta)
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor="flagName">
-                      Flag Name <span className="text-destructive">*</span>
-                    </FieldLabel>
+                    <FieldLabel htmlFor="flagName">Flag Name</FieldLabel>
                     <Input
                       id="flagName"
                       name={field.name}

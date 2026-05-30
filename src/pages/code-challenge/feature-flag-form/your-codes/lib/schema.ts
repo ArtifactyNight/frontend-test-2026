@@ -105,11 +105,13 @@ export const targetingRuleSchema = z.object({
 })
 export type TargetingRule = z.infer<typeof targetingRuleSchema>
 
+export const flagNameSchema = z
+  .string()
+  .min(1, 'Flag name is required')
+  .regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers and hyphens only')
+
 export const flagFormSchema = z.object({
-  flagName: z
-    .string()
-    .min(1, 'Flag name is required')
-    .regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers and hyphens only'),
+  flagName: flagNameSchema,
   description: z.string(),
   enabled: z.boolean(),
   variations: z
