@@ -1,5 +1,6 @@
 import { formOptions } from '@tanstack/react-form'
 import { flagFormSchema } from './schema'
+import type { RuleCondition, RuleGroup } from './schema'
 import { newId } from './utils'
 
 export const featureFlagFormOptions = formOptions({
@@ -17,9 +18,9 @@ export const featureFlagFormOptions = formOptions({
         id: newId(),
         queryGroup: {
           id: newId(),
-          connector: 'AND',
-          conditions: [],
-          groups: [],
+          connector: 'AND' as const,
+          conditions: [] as Array<RuleCondition>,
+          groups: [] as Array<RuleGroup>,
         },
         percentage: 100,
         variation: 'on',

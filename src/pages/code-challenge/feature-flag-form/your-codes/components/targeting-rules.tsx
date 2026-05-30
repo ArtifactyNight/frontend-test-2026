@@ -6,20 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from '#/components/ui/card'
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from '#/components/ui/field'
-import { Input } from '#/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '#/components/ui/select'
-import { Separator } from '#/components/ui/separator'
 import type { DragEndEvent } from '@dnd-kit/core'
 import {
   closestCenter,
@@ -27,7 +13,7 @@ import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
-  useSensors
+  useSensors,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -38,27 +24,29 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from 'lucide-react'
-import { useFormContext, withForm } from '../hooks/form-hook'
+import type { ReactNode } from 'react'
+import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
-import type { FlagFormValues } from '../lib/schema'
-import { isFieldInvalid, newId, normalizeFieldErrors } from '../lib/utils'
-import RuleGroupNode from './rule-group'
+import type { TargetingRule } from '../lib/schema'
+import { newId } from '../lib/utils'
+import {
+  TargetingRuleFields,
+  targetingRuleFields,
+} from './targeting-rule-fields'
 
-interface SortableRuleProps {
+interface SortableRuleShellProps {
   ruleId: string
   index: number
-  variationKeys: string[]
   onRemove: () => void
+  children: ReactNode
 }
 
-function SortableRule({
+function SortableRuleShell({
   ruleId,
   index,
-  variationKeys,
   onRemove,
-}: SortableRuleProps) {
-   
-  const form = useFormContext()
+  children,
+}: SortableRuleShellProps) {
   const {
     attributes,
     listeners,
@@ -66,9 +54,7 @@ function SortableRule({
     transform,
     transition,
     isDragging,
-  } = useSortable({
-    id: ruleId,
-  })
+  } = useSortable({ id: ruleId })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -82,7 +68,6 @@ function SortableRule({
       style={style}
       className="flex flex-col gap-3 rounded-lg border border-border bg-card p-3"
     >
-      {/* Rule header */}
       <div className="flex items-center justify-between">
         <button
           type="button"
@@ -105,110 +90,14 @@ function SortableRule({
           <Trash2Icon />
         </Button>
       </div>
-
-      {/* Query builder */}
-      <RuleGroupNode basePath={`targeting[${index}].queryGroup`} depth={0} />
-
-      <Separator />
-
-      {/* Percentage + Variation */}
-      <div className="flex gap-3">
-        <form.AppField
-          name={`targeting[${index}].percentage` as any}
-          validators={{
-            onBlur: ({ value }) => {
-              const n = Number(value)
-              if (isNaN(n)) return 'Must be a number'
-              if (n < 1) return 'Min 1'
-              if (n > 100) return 'Max 100'
-              return undefined
-            },
-          }}
-        >
-          {(f: any) => {
-            const isInvalid = isFieldInvalid(f.state.meta)
-            return (
-              <Field className="w-28" data-invalid={isInvalid}>
-                <FieldLabel className="text-xs text-muted-foreground">
-                  Percentage (%)
-                </FieldLabel>
-                <Input
-                  type="number"
-                  min={1}
-                  max={100}
-                  placeholder="100"
-                  value={f.state.value}
-                  onChange={(e: any) => f.handleChange(Number(e.target.value))}
-                  onBlur={f.handleBlur}
-                  aria-invalid={isInvalid}
-                  className="h-8 text-xs"
-                />
-                {isInvalid && (
-                  <FieldError
-                    errors={normalizeFieldErrors(f.state.meta.errors)}
-                  />
-                )}
-              </Field>
-            )
-          }}
-        </form.AppField>
-
-        <form.AppField
-          name={`targeting[${index}].variation`}
-          validators={{
-            onBlur: ({ value }: any) =>
-              !value ? 'Select a variation' : undefined,
-          }}
-        >
-          {(f: any) => {
-            const isInvalid = isFieldInvalid(f.state.meta)
-            return (
-              <Field className="flex-1" data-invalid={isInvalid}>
-                <FieldLabel className="text-xs text-muted-foreground">
-                  Variation
-                </FieldLabel>
-                <Select
-                  name={f.name}
-                  value={f.state.value || null!}
-                  onValueChange={f.handleChange}
-                >
-                  <SelectTrigger
-                    className="h-8 text-xs"
-                    aria-invalid={isInvalid}
-                  >
-                    <SelectValue placeholder="Select variation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {variationKeys.length === 0 ? (
-                      <SelectItem value="_none" disabled className="text-xs">
-                        Add variations first
-                      </SelectItem>
-                    ) : (
-                      variationKeys.map((key) => (
-                        <SelectItem key={key} value={key} className="text-xs">
-                          {key}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
-                {isInvalid && (
-                  <FieldError
-                    errors={normalizeFieldErrors(f.state.meta.errors)}
-                  />
-                )}
-              </Field>
-            )
-          }}
-        </form.AppField>
-      </div>
+      {children}
     </div>
   )
 }
 
 export const TargetingRules = withForm({
   ...featureFlagFormOptions,
-  render: ({ form }: { form: any }) => {
+  render: function Render({ form }) {
     const sensors = useSensors(
       useSensor(PointerSensor),
       useSensor(KeyboardSensor, {
@@ -220,14 +109,14 @@ export const TargetingRules = withForm({
       const { active, over } = event
       if (!over || active.id === over.id) return
 
-      const targeting: FlagFormValues['targeting'] = (form).state.values
-        .targeting
+      const targeting = form.state.values.targeting
       const oldIdx = targeting.findIndex((r) => r.id === active.id)
       const newIdx = targeting.findIndex((r) => r.id === over.id)
       if (oldIdx === -1 || newIdx === -1) return
-      ;(form).setFieldValue(
+
+      form.setFieldValue(
         'targeting',
-        arrayMove(targeting, oldIdx, newIdx),
+        arrayMove(targeting, oldIdx, newIdx) as typeof targeting,
       )
     }
 
@@ -238,12 +127,12 @@ export const TargetingRules = withForm({
         </CardHeader>
         <CardContent className="pt-4">
           <form.AppField name="targeting" mode="array">
-            {(field: any) => {
-              const targeting: FlagFormValues['targeting'] = field.state.value
-              const variationKeys: string[] = (
-                form
-              ).state.values.variations.map((v: any) => v.key)
-              const ids = targeting.map((r) => r.id)
+            {(field) => {
+              const targeting = field.state.value
+              const variationKeys = form.state.values.variations.map(
+                (v) => v.key,
+              )
+              const ids = targeting.map((r: TargetingRule) => r.id)
 
               if (targeting.length === 0) {
                 return (
@@ -265,14 +154,19 @@ export const TargetingRules = withForm({
                     strategy={verticalListSortingStrategy}
                   >
                     <div className="flex flex-col gap-3">
-                      {targeting.map((rule, i) => (
-                        <SortableRule
+                      {targeting.map((rule: TargetingRule, i: number) => (
+                        <SortableRuleShell
                           key={rule.id}
                           ruleId={rule.id}
                           index={i}
-                          variationKeys={variationKeys}
                           onRemove={() => field.removeValue(i)}
-                        />
+                        >
+                          <TargetingRuleFields
+                            form={form}
+                            fields={targetingRuleFields(i)}
+                            variationKeys={variationKeys}
+                          />
+                        </SortableRuleShell>
                       ))}
                     </div>
                   </SortableContext>
@@ -287,18 +181,23 @@ export const TargetingRules = withForm({
             variant="outline"
             size="sm"
             onClick={() =>
-              (form).pushFieldValue('targeting', {
+              form.pushFieldValue('targeting', {
                 id: newId(),
                 queryGroup: {
                   id: newId(),
-                  connector: 'AND',
+                  connector: 'AND' as const,
                   conditions: [
-                    { id: newId(), field: '', operator: '==', value: '' },
+                    {
+                      id: newId(),
+                      field: '',
+                      operator: '==' as const,
+                      value: '',
+                    },
                   ],
                   groups: [],
                 },
                 percentage: 100,
-                variation: (form).state.values.variations[0]?.key ?? '',
+                variation: form.state.values.variations[0]?.key ?? '',
               })
             }
           >
