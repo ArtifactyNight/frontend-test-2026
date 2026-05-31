@@ -13,6 +13,12 @@ import { useStore } from '@tanstack/react-form'
 import { withFieldGroup } from '../hooks/form-hook'
 import type { ServeConfig } from '../lib/schema'
 import {
+  emptyVariationsIcon,
+  SelectOptionLabel,
+  SERVE_TYPE_OPTIONS,
+  variationOptionIcon,
+} from '../lib/select-options'
+import {
   createPercentageDistribution,
   fromDatetimeLocalValue,
   isFieldInvalid,
@@ -65,12 +71,15 @@ function VariationSelect({
       <SelectContent>
         {variationKeys.length === 0 ? (
           <SelectItem value="_none" disabled className="text-xs">
-            Add variations first
+            <SelectOptionLabel
+              icon={emptyVariationsIcon}
+              label="Add variations first"
+            />
           </SelectItem>
         ) : (
           variationKeys.map((key) => (
             <SelectItem key={key} value={key} className="text-xs">
-              {key}
+              <SelectOptionLabel icon={variationOptionIcon} label={key} />
             </SelectItem>
           ))
         )}
@@ -115,15 +124,11 @@ export const ServeFields = withFieldGroup({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="variation" className="text-xs">
-                    Variation
-                  </SelectItem>
-                  <SelectItem value="percentage" className="text-xs">
-                    Percentage rollout
-                  </SelectItem>
-                  <SelectItem value="progressive" className="text-xs">
-                    Progressive rollout
-                  </SelectItem>
+                  {SERVE_TYPE_OPTIONS.map(({ value, label, icon }) => (
+                    <SelectItem key={value} value={value} className="text-xs">
+                      <SelectOptionLabel icon={icon} label={label} />
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </Field>
