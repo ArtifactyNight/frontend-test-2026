@@ -25,6 +25,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { GripVerticalIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { useId } from 'react'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
 import type { TargetingRule } from '../lib/schema'
@@ -98,6 +99,8 @@ function SortableRuleShell({
 export const TargetingRules = withForm({
   ...featureFlagFormOptions,
   render: function Render({ form }) {
+    const dndContextId = useId()
+
     const sensors = useSensors(
       useSensor(PointerSensor),
       useSensor(KeyboardSensor, {
@@ -142,6 +145,7 @@ export const TargetingRules = withForm({
 
               return (
                 <DndContext
+                  id={dndContextId}
                   sensors={sensors}
                   collisionDetection={closestCenter}
                   onDragEnd={handleDragEnd}

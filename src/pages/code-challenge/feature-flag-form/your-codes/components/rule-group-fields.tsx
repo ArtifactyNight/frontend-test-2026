@@ -12,8 +12,8 @@ import { ToggleGroup, ToggleGroupItem } from '#/components/ui/toggle-group'
 import { cn } from '#/lib/utils'
 import { LayersIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { withFieldGroup } from '../hooks/form-hook'
-import { OPERATOR_OPTIONS, SelectOptionLabel } from '../lib/select-options'
 import type { RuleCondition, RuleGroup } from '../lib/schema'
+import { OPERATOR_OPTIONS, SelectOptionLabel } from '../lib/select-options'
 import { isFieldInvalid, newId, normalizeFieldErrors } from '../lib/utils'
 
 const DEPTH_COLORS = [
@@ -150,15 +150,20 @@ export const RuleGroupFields = withFieldGroup({
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {OPERATOR_OPTIONS.map(({ value, icon, label }) => (
-                                <SelectItem
-                                  key={value}
-                                  value={value}
-                                  className="text-xs"
-                                >
-                                  <SelectOptionLabel icon={icon} label={label} />
-                                </SelectItem>
-                              ))}
+                              {OPERATOR_OPTIONS.map(
+                                ({ value, icon, label }) => (
+                                  <SelectItem
+                                    key={value}
+                                    value={value}
+                                    className="text-xs"
+                                  >
+                                    <SelectOptionLabel
+                                      icon={icon}
+                                      label={label}
+                                    />
+                                  </SelectItem>
+                                ),
+                              )}
                             </SelectContent>
                           </Select>
                         )}

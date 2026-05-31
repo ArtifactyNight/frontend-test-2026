@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
-import Editor from '@monaco-editor/react'
+import { Editor } from '@monaco-editor/react'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
 import { buildOutput } from '../lib/utils'
