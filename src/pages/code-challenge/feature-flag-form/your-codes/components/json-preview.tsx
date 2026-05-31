@@ -28,6 +28,7 @@ export const JsonPreview = withForm({
                     minimap: { enabled: false },
                     scrollBeyondLastLine: false,
                     fontSize: 13,
+                    fontFamily: 'var(--font-mono)',
                     lineNumbers: 'off',
                     folding: true,
                     wordWrap: 'off',

@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Geist+Mono:ital,wght@0,100..900;1,100..900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/Geist";
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -38,9 +40,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --font-sans: Outfit, sans-serif;
+  --font-sans: "Anuphan", sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: Geist Mono, ui-monospace, monospace;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
   --radius: 0.625rem;
   --shadow-x: 0;
   --shadow-y: 1px;
@@ -93,7 +95,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  --font-sans: Outfit, sans-serif;
+  --font-sans: "Anuphan Variable", sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: Geist Mono, ui-monospace, monospace;
   --radius: 1rem;
@@ -147,8 +149,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: 'Geist Variable', sans-serif;
-  --font-mono: var(--font-mono);
+  --font-sans: 'Anuphan', sans-serif;
+  --font-mono: var(--font-mono);  
   --font-serif: var(--font-serif);
 
   --radius-sm: calc(var(--radius) - 4px);
