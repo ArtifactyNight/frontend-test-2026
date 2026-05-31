@@ -26,10 +26,11 @@ import { featureFlagFormOptions } from '../lib/form-options'
 import type { Variation } from '../lib/schema'
 import { isFieldInvalid, newId, normalizeFieldErrors } from '../lib/utils'
 
-function getValueType(v: string): string {
-  if (v === 'true' || v === 'false') return 'boolean'
-  if (v.trim() !== '' && !isNaN(Number(v))) return 'number'
-  if (v.trim() !== '') return 'string'
+function getValueType(v: string | undefined): string {
+  const value = v ?? ''
+  if (value === 'true' || value === 'false') return 'boolean'
+  if (value.trim() !== '' && !isNaN(Number(value))) return 'number'
+  if (value.trim() !== '') return 'string'
   return ''
 }
 
@@ -70,98 +71,88 @@ export const FlagVariations = withForm({
                     </div>
                   )}
                   {field.state.value.map((_: Variation, i: number) => (
-                      <div
-                        key={field.state.value[i]?.id ?? i}
-                        className="flex items-start gap-2"
-                      >
-                        <form.AppField name={`variations[${i}].key`}>
-                          {(keyField) => {
-                            const isInvalid = isFieldInvalid(
-                              keyField.state.meta,
-                            )
-                            return (
-                              <Field
-                                className="flex-1"
-                                data-invalid={isInvalid}
-                              >
-                                <Input
-                                  placeholder="variant_1"
-                                  value={keyField.state.value}
+                    <div
+                      key={field.state.value[i]?.id ?? i}
+                      className="flex items-start gap-2"
+                    >
+                      <form.AppField name={`variations[${i}].key`}>
+                        {(keyField) => {
+                          const isInvalid = isFieldInvalid(keyField.state.meta)
+                          return (
+                            <Field className="flex-1" data-invalid={isInvalid}>
+                              <Input
+                                placeholder="variant_1"
+                                value={keyField.state.value}
+                                onChange={(e) =>
+                                  keyField.handleChange(e.target.value)
+                                }
+                                onBlur={keyField.handleBlur}
+                                aria-invalid={isInvalid}
+                              />
+                              {isInvalid && (
+                                <FieldError
+                                  errors={normalizeFieldErrors(
+                                    keyField.state.meta.errors,
+                                  )}
+                                />
+                              )}
+                            </Field>
+                          )
+                        }}
+                      </form.AppField>
+
+                      <form.AppField name={`variations[${i}].value`}>
+                        {(valField) => {
+                          const isInvalid = isFieldInvalid(valField.state.meta)
+                          const type = getValueType(valField.state.value)
+                          return (
+                            <Field className="flex-1" data-invalid={isInvalid}>
+                              <InputGroup>
+                                <InputGroupInput
+                                  placeholder="true"
+                                  value={valField.state.value ?? ''}
                                   onChange={(e) =>
-                                    keyField.handleChange(e.target.value)
+                                    valField.handleChange(e.target.value)
                                   }
-                                  onBlur={keyField.handleBlur}
+                                  onBlur={valField.handleBlur}
                                   aria-invalid={isInvalid}
                                 />
-                                {isInvalid && (
-                                  <FieldError
-                                    errors={normalizeFieldErrors(
-                                      keyField.state.meta.errors,
-                                    )}
-                                  />
+                                {type && (
+                                  <InputGroupAddon align="inline-end">
+                                    <Badge
+                                      variant={
+                                        typeBadgeVariant[type] ?? 'outline'
+                                      }
+                                      className="text-[10px] h-4 px-1"
+                                    >
+                                      {type}
+                                    </Badge>
+                                  </InputGroupAddon>
                                 )}
-                              </Field>
-                            )
-                          }}
-                        </form.AppField>
-
-                        <form.AppField name={`variations[${i}].value`}>
-                          {(valField) => {
-                            const isInvalid = isFieldInvalid(
-                              valField.state.meta,
-                            )
-                            const type = getValueType(valField.state.value)
-                            return (
-                              <Field
-                                className="flex-1"
-                                data-invalid={isInvalid}
-                              >
-                                <InputGroup>
-                                  <InputGroupInput
-                                    placeholder="true"
-                                    value={valField.state.value}
-                                    onChange={(e) =>
-                                      valField.handleChange(e.target.value)
-                                    }
-                                    onBlur={valField.handleBlur}
-                                    aria-invalid={isInvalid}
-                                  />
-                                  {type && (
-                                    <InputGroupAddon align="inline-end">
-                                      <Badge
-                                        variant={
-                                          typeBadgeVariant[type] ?? 'outline'
-                                        }
-                                        className="text-[10px] h-4 px-1"
-                                      >
-                                        {type}
-                                      </Badge>
-                                    </InputGroupAddon>
+                              </InputGroup>
+                              {isInvalid && (
+                                <FieldError
+                                  errors={normalizeFieldErrors(
+                                    valField.state.meta.errors,
                                   )}
-                                </InputGroup>
-                                {isInvalid && (
-                                  <FieldError
-                                    errors={normalizeFieldErrors(
-                                      valField.state.meta.errors,
-                                    )}
-                                  />
-                                )}
-                              </Field>
-                            )
-                          }}
-                        </form.AppField>
+                                />
+                              )}
+                            </Field>
+                          )
+                        }}
+                      </form.AppField>
 
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
-                          onClick={() => field.removeValue(i)}
-                          disabled={field.state.value.length <= 1}
-                        >
-                          <Trash2Icon data-icon="inline-start" />
-                        </Button>
-                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        className="hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => field.removeValue(i)}
+                        disabled={field.state.value.length <= 1}
+                      >
+                        <Trash2Icon data-icon="inline-start" />
+                      </Button>
+                    </div>
                   ))}
                 </FieldGroup>
                 {isArrayInvalid && (

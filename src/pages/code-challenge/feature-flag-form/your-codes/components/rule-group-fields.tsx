@@ -95,8 +95,8 @@ export const RuleGroupFields = withFieldGroup({
             <Button
               type="button"
               variant="ghost"
-              size="sm"
-              className="size-7 text-muted-foreground hover:text-destructive"
+              size="icon-sm"
+              className="hover:text-destructive hover:bg-destructive/10"
               onClick={onRemove}
             >
               <Trash2Icon />
@@ -195,8 +195,8 @@ export const RuleGroupFields = withFieldGroup({
                       <Button
                         type="button"
                         variant="ghost"
-                        size="sm"
-                        className="size-8 shrink-0 text-muted-foreground hover:text-destructive"
+                        size="icon-sm"
+                        className="hover:text-destructive hover:bg-destructive/10"
                         onClick={() => conditionsField.removeValue(i)}
                       >
                         <Trash2Icon />
@@ -232,20 +232,13 @@ export const RuleGroupFields = withFieldGroup({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
-            className="h-7 text-xs"
+            size="xs"
             onClick={addCondition}
           >
             <PlusIcon data-icon="inline-start" />
             Condition
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs"
-            onClick={addSubGroup}
-          >
+          <Button type="button" variant="ghost" size="xs" onClick={addSubGroup}>
             <LayersIcon data-icon="inline-start" />
             Sub-group
           </Button>

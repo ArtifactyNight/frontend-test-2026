@@ -83,8 +83,8 @@ function SortableRuleShell({
         <Button
           type="button"
           variant="ghost"
-          size="sm"
-          className="size-7 text-muted-foreground hover:text-destructive"
+          size="icon-sm"
+          className="hover:text-destructive hover:bg-destructive/10"
           onClick={onRemove}
         >
           <Trash2Icon />
@@ -114,7 +114,10 @@ export const TargetingRules = withForm({
       const newIdx = targeting.findIndex((r) => r.id === over.id)
       if (oldIdx === -1 || newIdx === -1) return
 
-      form.setFieldValue('targeting', arrayMove(targeting, oldIdx, newIdx))
+      form.setFieldValue(
+        'targeting',
+        arrayMove(targeting, oldIdx, newIdx) as TargetingRule[],
+      )
     }
 
     return (

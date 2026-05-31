@@ -21,11 +21,14 @@ export function normalizeFieldErrors(
   )
 }
 
-export const parseVariationValue = (v: string): string | boolean | number => {
-  if (v === 'true') return true
-  if (v === 'false') return false
-  const n = Number(v)
-  return !isNaN(n) && v.trim() !== '' ? n : v
+export const parseVariationValue = (
+  v: string | undefined,
+): string | boolean | number => {
+  const value = v ?? ''
+  if (value === 'true') return true
+  if (value === 'false') return false
+  const n = Number(value)
+  return !isNaN(n) && value.trim() !== '' ? n : value
 }
 
 const buildQueryString = (group: RuleGroup): string => {
