@@ -159,6 +159,7 @@ export const TargetingRules = withForm({
                           onRemove={() => field.removeValue(i)}
                         >
                           <TargetingRuleFields
+                            key={`${rule.id}-${i}`}
                             form={form}
                             fields={targetingRuleFields(i)}
                             variationKeys={variationKeys}
