@@ -114,10 +114,7 @@ export const TargetingRules = withForm({
       const newIdx = targeting.findIndex((r) => r.id === over.id)
       if (oldIdx === -1 || newIdx === -1) return
 
-      form.setFieldValue(
-        'targeting',
-        arrayMove(targeting, oldIdx, newIdx) as TargetingRule[],
-      )
+      form.setFieldValue('targeting', arrayMove(targeting, oldIdx, newIdx))
     }
 
     return (
@@ -128,7 +125,7 @@ export const TargetingRules = withForm({
         <CardContent className="pt-4">
           <form.AppField name="targeting" mode="array">
             {(field) => {
-              const targeting = field.state.value
+              const targeting = field.state.value as unknown as TargetingRule[]
               const variationKeys = form.state.values.variations.map(
                 (v) => v.key,
               )

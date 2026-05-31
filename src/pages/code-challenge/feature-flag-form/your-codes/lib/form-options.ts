@@ -1,12 +1,12 @@
 import { formOptions } from '@tanstack/react-form'
-import { flagFormSchema } from './schema'
+import { type RuleCondition, type RuleGroup } from './schema'
 import { createDefaultServe, newId } from './utils'
 
 export const featureFlagFormOptions = formOptions({
-  validators: {
-    onBlur: flagFormSchema,
-    onSubmit: flagFormSchema,
-  },
+  // validators: {
+  //   onBlur: flagFormSchema,
+  //   onSubmit: flagFormSchema,
+  // },
   defaultValues: {
     flagName: 'my-new-feature',
     description: '',
@@ -16,17 +16,17 @@ export const featureFlagFormOptions = formOptions({
       { id: newId(), key: 'variant_2', value: 'false' },
     ],
     targeting: [
-      // {
-      //   id: newId(),
-      //   name: 'Rule 1',
-      //   queryGroup: {
-      //     id: newId(),
-      //     connector: 'AND' as const,
-      //     conditions: [] as Array<RuleCondition>,
-      //     groups: [] as Array<RuleGroup>,
-      //   },
-      //   serve: createDefaultServe('variant_1'),
-      // },
+      {
+        id: newId(),
+        name: 'Rule 1',
+        queryGroup: {
+          id: newId(),
+          connector: 'AND' as const,
+          conditions: [] as Array<RuleCondition>,
+          groups: [] as Array<RuleGroup>,
+        },
+        serve: createDefaultServe('variant_1'),
+      },
     ],
     defaultServe: createDefaultServe('variant_1'),
     metadata: [],
