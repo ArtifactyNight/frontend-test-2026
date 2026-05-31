@@ -39,12 +39,7 @@ export const FlagMetadata = withForm({
             <form.AppField
               name="flagName"
               validators={{
-                onChange: ({ value }) => {
-                  const result = flagNameSchema.safeParse(value)
-                  return result.success
-                    ? undefined
-                    : result.error.issues[0]?.message
-                },
+                onChange: flagNameSchema,
               }}
             >
               {(field) => {

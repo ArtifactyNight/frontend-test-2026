@@ -52,6 +52,37 @@ export const progressiveRolloutPointSchema = z.object({
   date: z.string().min(1, 'Date is required'),
 })
 
+export const requiredVariationSchema = progressiveRolloutPointSchema.shape.variation
+
+export const requiredDateSchema = progressiveRolloutPointSchema.shape.date
+
+function validateProgressiveEndAfterInitial(
+  initialDateStr: string,
+  endDateStr: string,
+  ctx: z.RefinementCtx,
+  path?: Array<string | number>,
+) {
+  const initialDate = new Date(initialDateStr)
+  const endDate = new Date(endDateStr)
+  if (
+    !isNaN(initialDate.getTime()) &&
+    !isNaN(endDate.getTime()) &&
+    endDate <= initialDate
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'End date must be after initial date',
+      ...(path ? { path } : {}),
+    })
+  }
+}
+
+export function createProgressiveRolloutEndDateSchema(getInitialDate: () => string) {
+  return requiredDateSchema.superRefine((value, ctx) => {
+    validateProgressiveEndAfterInitial(getInitialDate(), value, ctx)
+  })
+}
+
 export const serveConfigSchema = z
   .object({
     type: z.enum(SERVE_TYPES),
@@ -72,19 +103,12 @@ export const serveConfigSchema = z
     }
 
     if (data.type === 'progressive') {
-      const initialDate = new Date(data.progressiveRollout.initial.date)
-      const endDate = new Date(data.progressiveRollout.end.date)
-      if (
-        !isNaN(initialDate.getTime()) &&
-        !isNaN(endDate.getTime()) &&
-        endDate <= initialDate
-      ) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'End date must be after initial date',
-          path: ['progressiveRollout', 'end', 'date'],
-        })
-      }
+      validateProgressiveEndAfterInitial(
+        data.progressiveRollout.initial.date,
+        data.progressiveRollout.end.date,
+        ctx,
+        ['progressiveRollout', 'end', 'date'],
+      )
     }
   })
 
@@ -99,7 +123,7 @@ export type MetadataItem = z.infer<typeof metadataItemSchema>
 
 export const targetingRuleSchema = z.object({
   id: z.string(),
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().trim().min(1, 'Name is required'),
   queryGroup: ruleGroupSchema,
   serve: serveConfigSchema,
 })

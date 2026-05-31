@@ -11,6 +11,11 @@ import {
 import { Separator } from '#/components/ui/separator'
 import { useStore } from '@tanstack/react-form'
 import { withFieldGroup } from '../hooks/form-hook'
+import {
+  createProgressiveRolloutEndDateSchema,
+  requiredVariationSchema,
+  targetingRuleSchema,
+} from '../lib/schema'
 import type { ServeConfig } from '../lib/schema'
 import {
   emptyVariationsIcon,
@@ -140,8 +145,7 @@ export const ServeFields = withFieldGroup({
           <group.AppField
             name="variation"
             validators={{
-              onBlur: ({ value }) =>
-                !value ? 'Select a variation' : undefined,
+              onBlur: requiredVariationSchema,
             }}
           >
             {(field) => {
@@ -222,8 +226,7 @@ export const ServeFields = withFieldGroup({
               <group.AppField
                 name="progressiveRollout.initial.variation"
                 validators={{
-                  onBlur: ({ value }) =>
-                    !value ? 'Select a variation' : undefined,
+                  onBlur: requiredVariationSchema,
                 }}
               >
                 {(field) => {
@@ -299,8 +302,7 @@ export const ServeFields = withFieldGroup({
               <group.AppField
                 name="progressiveRollout.end.variation"
                 validators={{
-                  onBlur: ({ value }) =>
-                    !value ? 'Select a variation' : undefined,
+                  onBlur: requiredVariationSchema,
                 }}
               >
                 {(field) => {
@@ -350,18 +352,11 @@ export const ServeFields = withFieldGroup({
               <group.AppField
                 name="progressiveRollout.end.date"
                 validators={{
-                  onBlur: ({ value }) => {
-                    const initialDate = group.getFieldValue(
+                  onBlur: createProgressiveRolloutEndDateSchema(() =>
+                    group.getFieldValue(
                       'progressiveRollout.initial.date',
-                    ) as string
-                    if (!value) return 'Date is required'
-                    const initial = new Date(initialDate)
-                    const end = new Date(value)
-                    if (!isNaN(initial.getTime()) && end <= initial) {
-                      return 'End date must be after initial date'
-                    }
-                    return undefined
-                  },
+                    ) as string,
+                  ),
                   onChangeListenTo: ['progressiveRollout.initial.date'],
                 }}
               >

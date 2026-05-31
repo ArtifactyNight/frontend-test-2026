@@ -1,11 +1,8 @@
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from '#/components/ui/field'
+import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
 import { Separator } from '#/components/ui/separator'
 import { withFieldGroup } from '../hooks/form-hook'
+import { targetingRuleSchema } from '../lib/schema'
 import type { TargetingRule } from '../lib/schema'
 import { isFieldInvalid, normalizeFieldErrors } from '../lib/utils'
 import { RuleGroupFields } from './rule-group-fields'
@@ -48,8 +45,7 @@ export const TargetingRuleFields = withFieldGroup({
         <group.AppField
           name="name"
           validators={{
-            onBlur: ({ value }) =>
-              !value?.trim() ? 'Name is required' : undefined,
+            onBlur: targetingRuleSchema.shape.name,
           }}
         >
           {(field) => {
@@ -81,7 +77,11 @@ export const TargetingRuleFields = withFieldGroup({
 
         <Separator />
 
-        <ServeFields form={group} fields="serve" variationKeys={variationKeys} />
+        <ServeFields
+          form={group}
+          fields="serve"
+          variationKeys={variationKeys}
+        />
       </>
     )
   },
