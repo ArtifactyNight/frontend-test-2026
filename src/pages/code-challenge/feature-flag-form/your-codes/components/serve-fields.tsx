@@ -16,7 +16,8 @@ import {
   emptyVariationsIcon,
   SelectOptionLabel,
   SERVE_TYPE_OPTIONS,
-  variationOptionIcon,
+  VariationMarker,
+  VariationOptionLabel,
 } from '../lib/select-options'
 import {
   createPercentageDistribution,
@@ -77,9 +78,9 @@ function VariationSelect({
             />
           </SelectItem>
         ) : (
-          variationKeys.map((key) => (
+          variationKeys.map((key, index) => (
             <SelectItem key={key} value={key} className="text-xs">
-              <SelectOptionLabel icon={variationOptionIcon} label={key} />
+              <VariationOptionLabel label={key} index={index} />
             </SelectItem>
           ))
         )}
@@ -181,9 +182,10 @@ export const ServeFields = withFieldGroup({
                     Add variations first
                   </p>
                 ) : (
-                  variationKeys.map((key) => (
+                  variationKeys.map((key, index) => (
                     <Field key={key}>
-                      <FieldLabel className="text-xs text-muted-foreground">
+                      <FieldLabel className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <VariationMarker index={index} />
                         {key}
                       </FieldLabel>
                       <MaskInput

@@ -23,6 +23,7 @@ import {
 import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { withForm } from '../hooks/form-hook'
 import { featureFlagFormOptions } from '../lib/form-options'
+import { VariationMarker } from '../lib/select-options'
 import type { Variation } from '../lib/schema'
 import { isFieldInvalid, newId, normalizeFieldErrors } from '../lib/utils'
 
@@ -62,6 +63,7 @@ export const FlagVariations = withForm({
                 <FieldGroup className="gap-3">
                   {field.state.value.length > 0 && (
                     <div className="flex items-center gap-2 pr-10">
+                      <span className="size-5 shrink-0" aria-hidden />
                       <span className="flex-1 text-xs text-muted-foreground">
                         Name
                       </span>
@@ -75,6 +77,7 @@ export const FlagVariations = withForm({
                       key={field.state.value[i]?.id ?? i}
                       className="flex items-start gap-2"
                     >
+                      <VariationMarker index={i} className="mt-2" />
                       <form.AppField name={`variations[${i}].key`}>
                         {(keyField) => {
                           const isInvalid = isFieldInvalid(keyField.state.meta)
